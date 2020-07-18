@@ -114,7 +114,7 @@ public:
              typename = 
              std::enable_if<std::is_convertible_v<SPrecision, Precision>, Precision>
              >
-    auto operator+(MyMatrix<SPrecision>& mat){
+    auto operator+(MyMatrix<SPrecision>& mat) const{
         
         using ResultType = decltype(std::declval<SPrecision>()+std::declval<Precision>());
         
