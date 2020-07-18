@@ -50,7 +50,7 @@ private:
         }
     };
 
-    template<typename OtherPrecision> friend class MyMatrix;
+    template<typename SPrecision> friend class MyMatrix;
     
 public:
     
@@ -67,20 +67,20 @@ public:
 
     // Disabling constructor for non-convertible types, enable_if since C++11
     // Templates at least since C++98
-    template<typename ValuePrecision,
+    template<typename SPrecision,
              typename =
-             std::enable_if<std::is_convertible_v<ValuePrecision, Precision>, ValuePrecision>
+             std::enable_if<std::is_convertible_v<SPrecision, Precision>, SPrecision>
              >
-    MyMatrix(std::size_t rows, std::size_t cols, ValuePrecision val) : _rows(rows), _cols(cols){
+    MyMatrix(std::size_t rows, std::size_t cols, SPrecision val) : _rows(rows), _cols(cols){
         _elements = Mat_t(_rows*_cols, static_cast<Precision>(val));
     }
     
     //Copy constructor -- at least C++98
-    template<typename OtherPrecision,
+    template<typename SPrecision,
              typename =
-             std::enable_if<std::is_convertible_v<OtherPrecision, Precision>, OtherPrecision>
+             std::enable_if<std::is_convertible_v<SPrecision, Precision>, SPrecision>
              >
-    MyMatrix(const MyMatrix<OtherPrecision>& matrix) noexcept{
+    MyMatrix(const MyMatrix<SPrecision>& matrix) noexcept{
         _rows = matrix._rows;
         _cols = matrix._cols;
 
@@ -102,14 +102,6 @@ public:
     // Explicit default -- since C++11
     ~MyMatrix() = default;
 
-    const auto rows() const{
-        return _rows;
-    }
-
-    const auto cols() const{
-        return _cols;
-    }
-    
     //Operator [] - at least C++98
     ProxyAccessor operator[](std::size_t index_i) {
         //Here a RVO - Copy Elision must ocurr
@@ -124,7 +116,7 @@ public:
              >
     auto operator+(MyMatrix<SPrecision>& mat){
         
-        using ResultType = decltype(std::declval<SPrecision>()+std::declval<Precision>())
+        using ResultType = decltype(std::declval<SPrecision>()+std::declval<Precision>());
         
         if(_rows == mat._rows && _cols == mat._cols){
             MyMatrix<ResultType> result(_rows, _cols);
