@@ -16,6 +16,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 
 add_executable(MatrixExample)
+add_executable(BindExample)
+add_executable(StringLiteralsExample)
+add_executable(RAIIAndSmartExample)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 

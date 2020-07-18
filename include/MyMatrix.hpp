@@ -7,16 +7,18 @@
 #include <functional>
 #include <numeric>
 #include <cmath>
+#include <exception>
 /*
   Here I am going to present the following examples:
 
   - Member functions
-  - Operator definition (operator+)
+  - Operator overload (operator+, operator[])
   - cast operator (operator "int")
   - Templates
   - For_each with lambdas
   - keyword auto
   - noexcept
+  - Copy Elision (RVO)
  */
 
 
@@ -50,9 +52,10 @@ private:
     
 public:
     
-    //Special Members
+    //Special Members - in C++
     //Default Constructor
 
+    // Explicitly deleted -- since C++11
     MyMatrix() = delete;
     
     MyMatrix(std::size_t rows, std::size_t cols) : _rows(rows), _cols(cols){
@@ -60,7 +63,8 @@ public:
     }
 
 
-    // Disabling constructor for non-convertible types
+    // Disabling constructor for non-convertible types, enable_if since C++11
+    // Templates at least since C++98
     template<typename ValuePrecision,
              typename =
              std::enable_if<std::is_convertible_v<ValuePrecision, Precision>, ValuePrecision>
@@ -69,7 +73,7 @@ public:
         _elements = Mat_t(_rows*_cols, static_cast<Precision>(val));
     }
     
-    //Copy constructor
+    //Copy constructor -- at least C++98
     MyMatrix(const MyMatrix& matrix) noexcept{
         _rows = matrix._rows;
         _cols = matrix._cols;
@@ -84,28 +88,45 @@ public:
         
     }
 
-    //Move constructor
+    //Move constructor - since C++11
     MyMatrix(MyMatrix&& matrix) noexcept : _rows(std::move_if_noexcept(matrix._rows)),
                                   _cols(std::move_if_noexcept(matrix._cols)),
                                   _elements(std::move_if_noexcept(matrix._elements)){}
 
-
+    // Explicit default -- since C++11
     ~MyMatrix() = default;
 
-    //Operator []
+    const auto rows() const{
+        return _rows;
+    }
+
+    const auto cols() const{
+        return _cols;
+    }
+    
+    //Operator [] - at least C++98
     ProxyAccessor operator[](std::size_t index_i) {
         return ProxyAccessor(*this, index_i);
     };
 
+
+    //decltype(auto) as return type since C++14
     template<typename SPrecision,
              typename =
              std::enable_if<std::is_convertible_v<SPrecision, Precision>, Precision>
              >
-    auto operator+(MyMatrix<SPrecision>& mat){
-        
+    decltype(auto) operator+(MyMatrix<SPrecision>& mat){
+        if(_rows == mat.rows() && _cols == mat.cols()){
+            std::transform(_elements.begin(), _elements.end(),
+                           mat._elements.begin(), _elements.begin(),
+                           std::plus<Precision>());
+            return *this;
+        }else{
+            throw std::runtime_error("rows and cols in sum matrixes do not match");
+        }
     }
     
-    // Cast operator to Precision
+    // Cast operator to Precision -- explicit cast since C++11
     explicit operator Precision(){
         // Frobenius Norm of a Matrix
         // https://mathworld.wolfram.com/FrobeniusNorm.html
@@ -116,7 +137,7 @@ public:
         return std::sqrt(fnorm);
     }
     
-    // Cast operator to int
+    // Cast operator to int -- explicit cast since C++11
     explicit operator int(){
         return static_cast<int>(static_cast<Precision>(*this));
     }
