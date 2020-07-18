@@ -19,6 +19,7 @@ add_executable(MatrixExample)
 add_executable(BindExample)
 add_executable(StringLiteralsExample)
 add_executable(RAIIAndSmartExample)
+add_executable(InheritanceExample)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 

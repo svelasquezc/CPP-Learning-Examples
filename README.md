@@ -1,4 +1,4 @@
-# CPP Learning Exaples Readme
+# CPP Learning Examples Readme
 
 In this repository I implement some examples on how to use different C++ features like:
 
