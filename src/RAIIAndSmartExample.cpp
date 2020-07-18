@@ -34,13 +34,18 @@ std::size_t RAIIExample::count_created = 0;
     
 int main(){
 
+
+    //Smart Pointers -- Well Stablished in C++11
     std::weak_ptr<RAIIExample> observer; 
     
     {
+        //Type Deduction -- C++11
         auto shared_RAII1 = std::make_shared<RAIIExample>("First");
 
         observer = shared_RAII1;
 
+        //Resource Adquisition Is Initialization (RAII)
+        //Destructors are called at the end of the scope
         {
             auto shared_RAII2 = shared_RAII1;
 

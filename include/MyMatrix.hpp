@@ -19,11 +19,12 @@
   - keyword auto
   - noexcept
   - Copy Elision (RVO)
- */
-
-
+*/
+    
 template<typename Precision>
 class MyMatrix{
+
+    static_assert(std::is_arithmetic_v<Precision>, "Precision type is not an arithmetic type");
 
     using Mat_t = std::vector<Precision>;
     using Precision_t = Precision;
@@ -48,7 +49,8 @@ private:
             return _my_mat._elements[_row_index*_my_mat._rows + col_index];
         }
     };
-    
+
+    template<typename OtherPrecision> friend class MyMatrix;
     
 public:
     
@@ -74,7 +76,11 @@ public:
     }
     
     //Copy constructor -- at least C++98
-    MyMatrix(const MyMatrix& matrix) noexcept{
+    template<typename OtherPrecision,
+             typename =
+             std::enable_if<std::is_convertible_v<OtherPrecision, Precision>, OtherPrecision>
+             >
+    MyMatrix(const MyMatrix<OtherPrecision>& matrix) noexcept{
         _rows = matrix._rows;
         _cols = matrix._cols;
 
@@ -82,7 +88,7 @@ public:
 
         for(std::size_t i=0; i<_rows; ++i){
             for(std::size_t j=0; j<_cols; ++j){
-                _elements[i][j] = matrix[i][j];
+                _elements[i][j] = static_cast<Precision>(matrix[i][j]);
             };
         };
         
@@ -90,8 +96,8 @@ public:
 
     //Move constructor - since C++11
     MyMatrix(MyMatrix&& matrix) noexcept : _rows(std::move_if_noexcept(matrix._rows)),
-                                  _cols(std::move_if_noexcept(matrix._cols)),
-                                  _elements(std::move_if_noexcept(matrix._elements)){}
+                                           _cols(std::move_if_noexcept(matrix._cols)),
+                                           _elements(std::move_if_noexcept(matrix._elements)){}
 
     // Explicit default -- since C++11
     ~MyMatrix() = default;
@@ -106,21 +112,26 @@ public:
     
     //Operator [] - at least C++98
     ProxyAccessor operator[](std::size_t index_i) {
+        //Here a RVO - Copy Elision must ocurr
         return ProxyAccessor(*this, index_i);
     };
 
 
-    //decltype(auto) as return type since C++14
+    //auto as return type since C++14, helper variables since C++17
     template<typename SPrecision,
-             typename =
+             typename = 
              std::enable_if<std::is_convertible_v<SPrecision, Precision>, Precision>
              >
-    decltype(auto) operator+(MyMatrix<SPrecision>& mat){
-        if(_rows == mat.rows() && _cols == mat.cols()){
+    auto operator+(MyMatrix<SPrecision>& mat){
+        
+        using ResultType = decltype(std::declval<SPrecision>()+std::declval<Precision>())
+        
+        if(_rows == mat._rows && _cols == mat._cols){
+            MyMatrix<ResultType> result(_rows, _cols);
             std::transform(_elements.begin(), _elements.end(),
-                           mat._elements.begin(), _elements.begin(),
-                           std::plus<Precision>());
-            return *this;
+                           mat._elements.begin(), result._elements.begin(),
+                           std::plus<ResultType>());
+            return result;
         }else{
             throw std::runtime_error("rows and cols in sum matrixes do not match");
         }
