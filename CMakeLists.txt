@@ -20,6 +20,8 @@ add_executable(BindExample)
 add_executable(StringLiteralsExample)
 add_executable(RAIIAndSmartExample)
 add_executable(InheritanceExample)
+add_executable(StructuredBindingExample)
+add_executable(RegexAndFilesystemExample)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 

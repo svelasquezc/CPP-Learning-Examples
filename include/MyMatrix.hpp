@@ -31,9 +31,11 @@ class MyMatrix{
     
 private:
     
-    std::vector<Precision> _elements;
     std::size_t _rows;
     std::size_t _cols;
+    
+    std::vector<Precision> _elements;
+
     
     class ProxyAccessor{
         
@@ -134,14 +136,15 @@ public:
         // Frobenius Norm of a Matrix
         // https://mathworld.wolfram.com/FrobeniusNorm.html
         //
-        Precision fnorm=static_cast<Precision>(0);
+        auto fnorm=static_cast<Precision>(0);
         std::for_each(_elements.begin(), _elements.end(),
                       [&](auto value){fnorm+=std::pow(value,2);});
         return std::sqrt(fnorm);
     }
     
     // Cast operator to int -- explicit cast since C++11
-    explicit operator int(){
+    // inline usage
+    explicit inline operator int(){
         return static_cast<int>(static_cast<Precision>(*this));
     }
 };

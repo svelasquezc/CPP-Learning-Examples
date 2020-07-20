@@ -1,13 +1,11 @@
 #include <iostream>
 #include "MyMatrix.hpp"
 
-#define DEBUG 0
+#define CHECKTYPE 0
 
-#if DEBUG
 
 template<typename TD> class TypeDescriptor;
 
-#endif
 
 int main(){
     using Matrixd = MyMatrix<double>;
@@ -23,10 +21,12 @@ int main(){
     std::cout << "Frobenius Norm: static_cast<double>(mat) = " << static_cast<double>(mat) << std::endl;
     std::cout << "int cast: static_cast<int>(mat) = " << static_cast<int>(mat) << std::endl;
 
-    //auto mat3(mat + mat2);
+    auto mat3 = mat + mat2;
+
+    std::cout << "int cast: static_cast<int>(mat3) = " << static_cast<int>(mat3) << std::endl;
     
-#if DEBUG
-    TypeDescriptor<decltype(mat3)> td();
+#if CHECKTYPE
+    TypeDescriptor<decltype(mat3)> td;
 #endif
     //std::cout << mat[0][0] << std::endl;
     

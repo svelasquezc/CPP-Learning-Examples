@@ -32,14 +32,16 @@ public:
     Tree(Tree&&) = default;
 
     Tree& operator=(Tree&) = default;
-
+ 
     Tree& operator=(Tree&&) = default;
     
     ~Tree() = default;
     
     // Override keyword C++11
-    void describe() override{
+    // noreturn attribute -- C++11
+    [[noreturn]] void describe() override{
         std::cout << _name << " of the species " << _specie << " with " << _number_of_leafs << " leafs.\n";
+        return; //Throws Warning
     };
 };
 
@@ -68,7 +70,8 @@ public:
     ~Rock() = default;
 
     // Override keyword C++11
-    void describe() override{
+    // noreturn attribute -- C++11
+    [[noreturn]] void describe() override{
         std::cout << _name << " with minerals: ";
         for(const auto& mineral : _minerals){
             std::cout << mineral << " ";
