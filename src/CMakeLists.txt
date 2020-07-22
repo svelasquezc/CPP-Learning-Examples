@@ -12,3 +12,5 @@ target_sources(StructuredBindingExample PUBLIC StructuredBindingExample.cpp)
 
 target_sources(RegexAndFilesystemExample PUBLIC RegexAndFilesystemExample.cpp)
 
+target_sources(AsyncExample PUBLIC AsyncExample.cpp)
+
