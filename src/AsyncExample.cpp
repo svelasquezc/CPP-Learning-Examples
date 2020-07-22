@@ -6,6 +6,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <cassert>
 
 std::mutex mutex;
 
@@ -59,7 +60,7 @@ int main(int argc, char* argv[]){
         std::stringstream reader(data);
         std::vector<int> vec(50000, 1);
         
-        std::size_t index = 0;
+        int index = 0;
         int value = 0;
         reader >> index;
         data = std::string(argv[2]);
@@ -72,6 +73,8 @@ int main(int argc, char* argv[]){
 
         int found_pos = parallel_linear_search(vec.begin(), vec.end(), value);
 
+        assert(found_pos == index && "Value was not found");
+        
         if(found_pos == -1){
             std::cout << "Value was not found.\n";
         }else{
