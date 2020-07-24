@@ -14,3 +14,9 @@ target_sources(RegexAndFilesystemExample PUBLIC RegexAndFilesystemExample.cpp)
 
 target_sources(AsyncExample PUBLIC AsyncExample.cpp)
 
+add_library(pImpllib SHARED pImplExampleImpl.cpp)
+
+target_sources(pImplExample PUBLIC pImplUsage.cpp)
+
+target_link_libraries(pImplExample PUBLIC pImpllib)
+

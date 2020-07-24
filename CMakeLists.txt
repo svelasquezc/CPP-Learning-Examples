@@ -27,6 +27,7 @@ add_executable(InheritanceExample)
 add_executable(StructuredBindingExample)
 add_executable(RegexAndFilesystemExample)
 add_executable(AsyncExample)
+add_executable(pImplExample)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
